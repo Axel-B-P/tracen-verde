@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SanitariosRouteImport } from './routes/sanitarios'
+import { Route as AlertasRouteImport } from './routes/alertas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnimalesIndexRouteImport } from './routes/animales.index'
 import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravana'
@@ -17,6 +18,11 @@ import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravan
 const SanitariosRoute = SanitariosRouteImport.update({
   id: '/sanitarios',
   path: '/sanitarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertasRoute = AlertasRouteImport.update({
+  id: '/alertas',
+  path: '/alertas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const AnimalesCaravanaRoute = AnimalesCaravanaRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alertas': typeof AlertasRoute
   '/sanitarios': typeof SanitariosRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alertas': typeof AlertasRoute
   '/sanitarios': typeof SanitariosRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales': typeof AnimalesIndexRoute
@@ -50,20 +58,33 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alertas': typeof AlertasRoute
   '/sanitarios': typeof SanitariosRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sanitarios' | '/animales/$caravana' | '/animales/'
+  fullPaths:
+    | '/'
+    | '/alertas'
+    | '/sanitarios'
+    | '/animales/$caravana'
+    | '/animales/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sanitarios' | '/animales/$caravana' | '/animales'
-  id: '__root__' | '/' | '/sanitarios' | '/animales/$caravana' | '/animales/'
+  to: '/' | '/alertas' | '/sanitarios' | '/animales/$caravana' | '/animales'
+  id:
+    | '__root__'
+    | '/'
+    | '/alertas'
+    | '/sanitarios'
+    | '/animales/$caravana'
+    | '/animales/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlertasRoute: typeof AlertasRoute
   SanitariosRoute: typeof SanitariosRoute
   AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
   AnimalesIndexRoute: typeof AnimalesIndexRoute
@@ -76,6 +97,13 @@ declare module '@tanstack/react-router' {
       path: '/sanitarios'
       fullPath: '/sanitarios'
       preLoaderRoute: typeof SanitariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alertas': {
+      id: '/alertas'
+      path: '/alertas'
+      fullPath: '/alertas'
+      preLoaderRoute: typeof AlertasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,6 +132,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlertasRoute: AlertasRoute,
   SanitariosRoute: SanitariosRoute,
   AnimalesCaravanaRoute: AnimalesCaravanaRoute,
   AnimalesIndexRoute: AnimalesIndexRoute,
