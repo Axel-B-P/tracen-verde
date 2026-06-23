@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Beef, ShieldCheck, AlertTriangle, BellRing, QrCode, Eye } from "lucide-react";
+import { Beef, ShieldCheck, AlertTriangle, BellRing, QrCode, Eye, Plus } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { animales, alertas } from "@/lib/trazagan-data";
 
