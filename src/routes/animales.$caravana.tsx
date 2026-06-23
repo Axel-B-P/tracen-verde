@@ -67,9 +67,13 @@ function AnimalDetail() {
                 )}
               </div>
             </div>
-            <button className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground hover:opacity-90 self-start">
+            <Link
+              to="/qr"
+              search={{ caravana: animal.caravana }}
+              className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground hover:opacity-90 self-start"
+            >
               <QrCode className="h-4 w-4" /> Generar QR
-            </button>
+            </Link>
           </div>
         </div>
 
