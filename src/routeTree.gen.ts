@@ -9,38 +9,128 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SanitariosRouteImport } from './routes/sanitarios'
+import { Route as QrRouteImport } from './routes/qr'
+import { Route as AlertasRouteImport } from './routes/alertas'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AnimalesIndexRouteImport } from './routes/animales.index'
+import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravana'
 
+const SanitariosRoute = SanitariosRouteImport.update({
+  id: '/sanitarios',
+  path: '/sanitarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrRoute = QrRouteImport.update({
+  id: '/qr',
+  path: '/qr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlertasRoute = AlertasRouteImport.update({
+  id: '/alertas',
+  path: '/alertas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnimalesIndexRoute = AnimalesIndexRouteImport.update({
+  id: '/animales/',
+  path: '/animales/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnimalesCaravanaRoute = AnimalesCaravanaRouteImport.update({
+  id: '/animales/$caravana',
+  path: '/animales/$caravana',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/alertas': typeof AlertasRoute
+  '/qr': typeof QrRoute
+  '/sanitarios': typeof SanitariosRoute
+  '/animales/$caravana': typeof AnimalesCaravanaRoute
+  '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/alertas': typeof AlertasRoute
+  '/qr': typeof QrRoute
+  '/sanitarios': typeof SanitariosRoute
+  '/animales/$caravana': typeof AnimalesCaravanaRoute
+  '/animales': typeof AnimalesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/alertas': typeof AlertasRoute
+  '/qr': typeof QrRoute
+  '/sanitarios': typeof SanitariosRoute
+  '/animales/$caravana': typeof AnimalesCaravanaRoute
+  '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/alertas'
+    | '/qr'
+    | '/sanitarios'
+    | '/animales/$caravana'
+    | '/animales/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/alertas'
+    | '/qr'
+    | '/sanitarios'
+    | '/animales/$caravana'
+    | '/animales'
+  id:
+    | '__root__'
+    | '/'
+    | '/alertas'
+    | '/qr'
+    | '/sanitarios'
+    | '/animales/$caravana'
+    | '/animales/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlertasRoute: typeof AlertasRoute
+  QrRoute: typeof QrRoute
+  SanitariosRoute: typeof SanitariosRoute
+  AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
+  AnimalesIndexRoute: typeof AnimalesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sanitarios': {
+      id: '/sanitarios'
+      path: '/sanitarios'
+      fullPath: '/sanitarios'
+      preLoaderRoute: typeof SanitariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr': {
+      id: '/qr'
+      path: '/qr'
+      fullPath: '/qr'
+      preLoaderRoute: typeof QrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alertas': {
+      id: '/alertas'
+      path: '/alertas'
+      fullPath: '/alertas'
+      preLoaderRoute: typeof AlertasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +138,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/animales/': {
+      id: '/animales/'
+      path: '/animales'
+      fullPath: '/animales/'
+      preLoaderRoute: typeof AnimalesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/animales/$caravana': {
+      id: '/animales/$caravana'
+      path: '/animales/$caravana'
+      fullPath: '/animales/$caravana'
+      preLoaderRoute: typeof AnimalesCaravanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlertasRoute: AlertasRoute,
+  QrRoute: QrRoute,
+  SanitariosRoute: SanitariosRoute,
+  AnimalesCaravanaRoute: AnimalesCaravanaRoute,
+  AnimalesIndexRoute: AnimalesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
