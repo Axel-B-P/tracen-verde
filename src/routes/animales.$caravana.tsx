@@ -114,7 +114,7 @@ function AnimalDetail() {
             <h2 className="font-display font-semibold">Historial sanitario</h2>
           </div>
           <ol className="p-5 space-y-0">
-            {animal.historial.map((ev, i) => (
+            {animal.historial.map((ev: { fecha: string; evento: string; detalle?: string }, i: number) => (
               <li key={i} className="relative pl-8 pb-6 last:pb-0">
                 <span className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-primary ring-4 ring-primary/15" />
                 {i < animal.historial.length - 1 && (

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnimalesIndexRouteImport } from './routes/animales.index'
+import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravana'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const AnimalesIndexRoute = AnimalesIndexRouteImport.update({
   path: '/animales/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnimalesCaravanaRoute = AnimalesCaravanaRouteImport.update({
+  id: '/animales/$caravana',
+  path: '/animales/$caravana',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales': typeof AnimalesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/animales/'
+  fullPaths: '/' | '/animales/$caravana' | '/animales/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/animales'
-  id: '__root__' | '/' | '/animales/'
+  to: '/' | '/animales/$caravana' | '/animales'
+  id: '__root__' | '/' | '/animales/$caravana' | '/animales/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
   AnimalesIndexRoute: typeof AnimalesIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnimalesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/animales/$caravana': {
+      id: '/animales/$caravana'
+      path: '/animales/$caravana'
+      fullPath: '/animales/$caravana'
+      preLoaderRoute: typeof AnimalesCaravanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnimalesCaravanaRoute: AnimalesCaravanaRoute,
   AnimalesIndexRoute: AnimalesIndexRoute,
 }
 export const routeTree = rootRouteImport
