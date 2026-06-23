@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SanitariosRouteImport } from './routes/sanitarios'
+import { Route as QrRouteImport } from './routes/qr'
 import { Route as AlertasRouteImport } from './routes/alertas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnimalesIndexRouteImport } from './routes/animales.index'
@@ -18,6 +19,11 @@ import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravan
 const SanitariosRoute = SanitariosRouteImport.update({
   id: '/sanitarios',
   path: '/sanitarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrRoute = QrRouteImport.update({
+  id: '/qr',
+  path: '/qr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AlertasRoute = AlertasRouteImport.update({
@@ -44,6 +50,7 @@ const AnimalesCaravanaRoute = AnimalesCaravanaRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alertas': typeof AlertasRoute
+  '/qr': typeof QrRoute
   '/sanitarios': typeof SanitariosRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/': typeof AnimalesIndexRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alertas': typeof AlertasRoute
+  '/qr': typeof QrRoute
   '/sanitarios': typeof SanitariosRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales': typeof AnimalesIndexRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/alertas': typeof AlertasRoute
+  '/qr': typeof QrRoute
   '/sanitarios': typeof SanitariosRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/': typeof AnimalesIndexRoute
@@ -68,15 +77,23 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/alertas'
+    | '/qr'
     | '/sanitarios'
     | '/animales/$caravana'
     | '/animales/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alertas' | '/sanitarios' | '/animales/$caravana' | '/animales'
+  to:
+    | '/'
+    | '/alertas'
+    | '/qr'
+    | '/sanitarios'
+    | '/animales/$caravana'
+    | '/animales'
   id:
     | '__root__'
     | '/'
     | '/alertas'
+    | '/qr'
     | '/sanitarios'
     | '/animales/$caravana'
     | '/animales/'
@@ -85,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlertasRoute: typeof AlertasRoute
+  QrRoute: typeof QrRoute
   SanitariosRoute: typeof SanitariosRoute
   AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
   AnimalesIndexRoute: typeof AnimalesIndexRoute
@@ -97,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/sanitarios'
       fullPath: '/sanitarios'
       preLoaderRoute: typeof SanitariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr': {
+      id: '/qr'
+      path: '/qr'
+      fullPath: '/qr'
+      preLoaderRoute: typeof QrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/alertas': {
@@ -133,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlertasRoute: AlertasRoute,
+  QrRoute: QrRoute,
   SanitariosRoute: SanitariosRoute,
   AnimalesCaravanaRoute: AnimalesCaravanaRoute,
   AnimalesIndexRoute: AnimalesIndexRoute,
