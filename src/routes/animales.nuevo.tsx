@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
+import { insertAnimal } from "@/lib/animal-api";
 
 export const Route = createFileRoute("/animales/nuevo")({
   head: () => ({
@@ -48,6 +50,7 @@ function Field({
 
 function NuevoAnimalPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [form, setForm] = useState({
     caravana: "",
     raza: "",
@@ -60,6 +63,18 @@ function NuevoAnimalPage() {
     observaciones: "",
   });
   const [errors, setErrors] = useState<{ caravana?: string; raza?: string }>({});
+
+  const mutation = useMutation({
+    mutationFn: insertAnimal,
+    onSuccess: async (animal) => {
+      toast.success(`Animal ${animal.caravana} registrado correctamente ✓`);
+      await queryClient.invalidateQueries({ queryKey: ["animales"] });
+      navigate({ to: "/" });
+    },
+    onError: (err: Error) => {
+      toast.error(`No se pudo guardar: ${err.message}`);
+    },
+  });
 
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -76,9 +91,20 @@ function NuevoAnimalPage() {
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
-    toast.success(`Animal ${form.caravana} registrado correctamente ✓`);
-    navigate({ to: "/" });
+    mutation.mutate({
+      caravana: form.caravana.trim(),
+      raza: form.raza,
+      sexo: form.sexo,
+      categoria: form.categoria,
+      fecha_nacimiento: form.fechaNacimiento || null,
+      origen: form.origen,
+      sistema_cria: form.sistema,
+      potrero: form.potrero || undefined,
+      observaciones: form.observaciones || undefined,
+    });
   };
+
+  const submitting = mutation.isPending;
 
   return (
     <AppLayout>
@@ -224,9 +250,11 @@ function NuevoAnimalPage() {
               </Link>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                disabled={submitting}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
               >
-                Guardar animal
+                {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {submitting ? "Guardando…" : "Guardar animal"}
               </button>
             </div>
           </form>

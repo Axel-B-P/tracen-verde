@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Beef, ShieldCheck, AlertTriangle, BellRing, QrCode, Eye, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Beef, ShieldCheck, AlertTriangle, BellRing, QrCode, Eye, Plus, Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { animales, alertas } from "@/lib/trazagan-data";
+import { animales as mockAnimales, alertas } from "@/lib/trazagan-data";
+import { fetchAnimales, type DbAnimal } from "@/lib/animal-api";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -64,7 +66,33 @@ function Badge({
   );
 }
 
+type Row = { caravana: string; raza: string; categoria: string; estado: string };
+
+function toRows(db: DbAnimal[]): Row[] {
+  return db.map((a) => ({
+    caravana: a.caravana,
+    raza: a.raza,
+    categoria: a.categoria ?? "—",
+    estado: a.estado ?? "activo",
+  }));
+}
+
 function Dashboard() {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["animales"],
+    queryFn: fetchAnimales,
+  });
+
+  const rows: Row[] =
+    data && data.length > 0
+      ? toRows(data)
+      : mockAnimales.map((a) => ({
+          caravana: a.caravana,
+          raza: a.raza,
+          categoria: a.categoria,
+          estado: a.estado,
+        }));
+
   return (
     <AppLayout>
       <div className="p-8 max-w-[1400px]">
@@ -84,7 +112,7 @@ function Dashboard() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total animales" value={150} icon={Beef} tone="primary" />
+          <StatCard label="Total animales" value={data?.length ?? 150} icon={Beef} tone="primary" />
           <StatCard label="Vacunas al día" value={142} icon={ShieldCheck} tone="success" />
           <StatCard label="Con carencia activa" value={3} icon={AlertTriangle} tone="warning" />
           <StatCard label="Alertas pendientes" value={5} icon={BellRing} tone="danger" />
@@ -102,47 +130,57 @@ function Dashboard() {
               </Link>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
-                    <th className="px-5 py-3 font-medium">Caravana</th>
-                    <th className="px-5 py-3 font-medium">Raza</th>
-                    <th className="px-5 py-3 font-medium">Categoría</th>
-                    <th className="px-5 py-3 font-medium">Estado</th>
-                    <th className="px-5 py-3 font-medium text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {animales.map((a) => (
-                    <tr key={a.caravana} className="border-b border-border last:border-0 hover:bg-muted/40">
-                      <td className="px-5 py-3 font-medium text-foreground">{a.caravana}</td>
-                      <td className="px-5 py-3 text-muted-foreground">{a.raza}</td>
-                      <td className="px-5 py-3 text-muted-foreground">{a.categoria}</td>
-                      <td className="px-5 py-3">
-                        {a.estado === "activo" ? (
-                          <Badge variant="active">Activo</Badge>
-                        ) : (
-                          <Badge variant="carencia">Carencia activa</Badge>
-                        )}
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center justify-end gap-2">
-                          <Link
-                            to="/animales/$caravana"
-                            params={{ caravana: a.caravana }}
-                            className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted"
-                          >
-                            <Eye className="h-3.5 w-3.5" /> Ver
-                          </Link>
-                          <button className="inline-flex items-center gap-1 rounded-md bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground hover:opacity-90">
-                            <QrCode className="h-3.5 w-3.5" /> QR
-                          </button>
-                        </div>
-                      </td>
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Cargando animales…
+                </div>
+              ) : isError ? (
+                <div className="px-5 py-8 text-sm text-destructive">
+                  Error al cargar: {(error as Error)?.message ?? "desconocido"}
+                </div>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
+                      <th className="px-5 py-3 font-medium">Caravana</th>
+                      <th className="px-5 py-3 font-medium">Raza</th>
+                      <th className="px-5 py-3 font-medium">Categoría</th>
+                      <th className="px-5 py-3 font-medium">Estado</th>
+                      <th className="px-5 py-3 font-medium text-right">Acciones</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {rows.map((a) => (
+                      <tr key={a.caravana} className="border-b border-border last:border-0 hover:bg-muted/40">
+                        <td className="px-5 py-3 font-medium text-foreground">{a.caravana}</td>
+                        <td className="px-5 py-3 text-muted-foreground">{a.raza}</td>
+                        <td className="px-5 py-3 text-muted-foreground">{a.categoria}</td>
+                        <td className="px-5 py-3">
+                          {a.estado === "activo" ? (
+                            <Badge variant="active">Activo</Badge>
+                          ) : (
+                            <Badge variant="carencia">Carencia activa</Badge>
+                          )}
+                        </td>
+                        <td className="px-5 py-3">
+                          <div className="flex items-center justify-end gap-2">
+                            <Link
+                              to="/animales/$caravana"
+                              params={{ caravana: a.caravana }}
+                              className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted"
+                            >
+                              <Eye className="h-3.5 w-3.5" /> Ver
+                            </Link>
+                            <button className="inline-flex items-center gap-1 rounded-md bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground hover:opacity-90">
+                              <QrCode className="h-3.5 w-3.5" /> QR
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </section>
 
