@@ -78,14 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "TrazaGan" },
+      { name: "description", content: "TrazaGan Livestock Hub is a web application for Argentine livestock producers to manage and track cattle." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "TrazaGan" },
+      { property: "og:description", content: "TrazaGan Livestock Hub is a web application for Argentine livestock producers to manage and track cattle." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "TrazaGan" },
+      { name: "twitter:description", content: "TrazaGan Livestock Hub is a web application for Argentine livestock producers to manage and track cattle." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a167d0dc-bc3a-4772-8fe1-9f0dc1ea6883/id-preview-b6ad9284--5a4680ec-b8cd-45d1-92ac-a893de577838.lovable.app-1782273148812.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a167d0dc-bc3a-4772-8fe1-9f0dc1ea6883/id-preview-b6ad9284--5a4680ec-b8cd-45d1-92ac-a893de577838.lovable.app-1782273148812.png" },
     ],
     links: [
       {
