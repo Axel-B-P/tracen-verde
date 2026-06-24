@@ -49,10 +49,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
         <div className="border-t border-sidebar-border px-4 py-4 flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-accent-foreground font-semibold text-sm">
-            CC
+            JP
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-medium">César Cuassolo</div>
+            <div className="text-sm font-medium">Juan Pérez</div>
             <div className="text-[11px] opacity-70">Admin</div>
           </div>
         </div>
