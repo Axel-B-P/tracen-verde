@@ -78,20 +78,22 @@ function toRows(db: DbAnimal[]): Row[] {
 }
 
 function Dashboard() {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["animales"],
     queryFn: fetchAnimales,
+    retry: 1,
   });
 
-  const rows: Row[] =
-    data && data.length > 0
-      ? toRows(data)
-      : mockAnimales.map((a) => ({
-          caravana: a.caravana,
-          raza: a.raza,
-          categoria: a.categoria,
-          estado: a.estado,
-        }));
+  const mockRows: Row[] = mockAnimales.map((a) => ({
+    caravana: a.caravana,
+    raza: a.raza,
+    categoria: a.categoria,
+    estado: a.estado,
+  }));
+
+  // Si la nube no responde, mostramos los datos de demostración
+  const rows: Row[] = data && data.length > 0 ? toRows(data) : mockRows;
+
 
   return (
     <AppLayout>
@@ -134,11 +136,14 @@ function Dashboard() {
                 <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" /> Cargando animales…
                 </div>
-              ) : isError ? (
-                <div className="px-5 py-8 text-sm text-destructive">
-                  Error al cargar: {(error as Error)?.message ?? "desconocido"}
-                </div>
               ) : (
+                <>
+                {isError && (
+                  <div className="px-5 py-2 text-xs text-accent-foreground bg-accent/20">
+                    Sin conexión con la base de datos — mostrando datos de demostración.
+                  </div>
+                )}
+
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
@@ -180,7 +185,9 @@ function Dashboard() {
                     ))}
                   </tbody>
                 </table>
+                </>
               )}
+
             </div>
           </section>
 
