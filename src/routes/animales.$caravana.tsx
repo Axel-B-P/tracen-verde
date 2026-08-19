@@ -33,6 +33,7 @@ function AnimalDetail() {
   const animalQuery = useQuery({
     queryKey: ["animal", caravana],
     queryFn: () => fetchAnimalByCaravana(caravana),
+    retry: 1,
   });
 
   const animalId = animalQuery.data?.id;
@@ -40,6 +41,7 @@ function AnimalDetail() {
     queryKey: ["registros", animalId],
     queryFn: () => fetchRegistrosByAnimalId(animalId!),
     enabled: !!animalId,
+    retry: 1,
   });
 
   if (animalQuery.isLoading) {
@@ -52,15 +54,6 @@ function AnimalDetail() {
     );
   }
 
-  if (animalQuery.isError) {
-    return (
-      <AppLayout>
-        <div className="p-8 text-sm text-destructive">
-          Error al cargar: {(animalQuery.error as Error)?.message}
-        </div>
-      </AppLayout>
-    );
-  }
 
   const db: DbAnimal | null = animalQuery.data ?? null;
   const mock = getAnimal(caravana);
