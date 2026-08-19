@@ -78,20 +78,22 @@ function toRows(db: DbAnimal[]): Row[] {
 }
 
 function Dashboard() {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["animales"],
     queryFn: fetchAnimales,
+    retry: 1,
   });
 
-  const rows: Row[] =
-    data && data.length > 0
-      ? toRows(data)
-      : mockAnimales.map((a) => ({
-          caravana: a.caravana,
-          raza: a.raza,
-          categoria: a.categoria,
-          estado: a.estado,
-        }));
+  const mockRows: Row[] = mockAnimales.map((a) => ({
+    caravana: a.caravana,
+    raza: a.raza,
+    categoria: a.categoria,
+    estado: a.estado,
+  }));
+
+  // Si la nube no responde, mostramos los datos de demostración
+  const rows: Row[] = data && data.length > 0 ? toRows(data) : mockRows;
+
 
   return (
     <AppLayout>
