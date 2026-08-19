@@ -185,7 +185,9 @@ function Dashboard() {
                     ))}
                   </tbody>
                 </table>
+                </>
               )}
+
             </div>
           </section>
 
