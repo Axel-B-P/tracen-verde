@@ -136,11 +136,14 @@ function Dashboard() {
                 <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" /> Cargando animales…
                 </div>
-              ) : isError ? (
-                <div className="px-5 py-8 text-sm text-destructive">
-                  Error al cargar: {(error as Error)?.message ?? "desconocido"}
-                </div>
               ) : (
+                <>
+                {isError && (
+                  <div className="px-5 py-2 text-xs text-accent-foreground bg-accent/20">
+                    Sin conexión con la base de datos — mostrando datos de demostración.
+                  </div>
+                )}
+
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground border-b border-border">
