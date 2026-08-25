@@ -76,6 +76,25 @@ export async function insertAnimal(input: {
   return data as DbAnimal;
 }
 
+export async function insertRegistro(input: {
+  animal_id: string;
+  tipo: string;
+  producto?: string;
+  dosis?: number | null;
+  fecha_aplicacion: string;
+  fecha_vencimiento?: string | null;
+  periodo_carencia?: number | null;
+  observaciones?: string;
+}): Promise<DbRegistroSanitario> {
+  const { data, error } = await supabase
+    .from("registro_sanitario")
+    .insert(input)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as DbRegistroSanitario;
+}
+
 export function formatFecha(iso: string | null | undefined): string {
   if (!iso) return "—";
   const [y, m, d] = iso.split("T")[0].split("-");
