@@ -14,6 +14,7 @@ import { Route as QrRouteImport } from './routes/qr'
 import { Route as AlertasRouteImport } from './routes/alertas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnimalesIndexRouteImport } from './routes/animales.index'
+import { Route as SanitariosNuevoRouteImport } from './routes/sanitarios.nuevo'
 import { Route as AnimalesNuevoRouteImport } from './routes/animales.nuevo'
 import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravana'
 
@@ -42,6 +43,11 @@ const AnimalesIndexRoute = AnimalesIndexRouteImport.update({
   path: '/animales/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SanitariosNuevoRoute = SanitariosNuevoRouteImport.update({
+  id: '/nuevo',
+  path: '/nuevo',
+  getParentRoute: () => SanitariosRoute,
+} as any)
 const AnimalesNuevoRoute = AnimalesNuevoRouteImport.update({
   id: '/animales/nuevo',
   path: '/animales/nuevo',
@@ -57,18 +63,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alertas': typeof AlertasRoute
   '/qr': typeof QrRoute
-  '/sanitarios': typeof SanitariosRoute
+  '/sanitarios': typeof SanitariosRouteWithChildren
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/nuevo': typeof AnimalesNuevoRoute
+  '/sanitarios/nuevo': typeof SanitariosNuevoRoute
   '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alertas': typeof AlertasRoute
   '/qr': typeof QrRoute
-  '/sanitarios': typeof SanitariosRoute
+  '/sanitarios': typeof SanitariosRouteWithChildren
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/nuevo': typeof AnimalesNuevoRoute
+  '/sanitarios/nuevo': typeof SanitariosNuevoRoute
   '/animales': typeof AnimalesIndexRoute
 }
 export interface FileRoutesById {
@@ -76,9 +84,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/alertas': typeof AlertasRoute
   '/qr': typeof QrRoute
-  '/sanitarios': typeof SanitariosRoute
+  '/sanitarios': typeof SanitariosRouteWithChildren
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/nuevo': typeof AnimalesNuevoRoute
+  '/sanitarios/nuevo': typeof SanitariosNuevoRoute
   '/animales/': typeof AnimalesIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/sanitarios'
     | '/animales/$caravana'
     | '/animales/nuevo'
+    | '/sanitarios/nuevo'
     | '/animales/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/sanitarios'
     | '/animales/$caravana'
     | '/animales/nuevo'
+    | '/sanitarios/nuevo'
     | '/animales'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/sanitarios'
     | '/animales/$caravana'
     | '/animales/nuevo'
+    | '/sanitarios/nuevo'
     | '/animales/'
   fileRoutesById: FileRoutesById
 }
@@ -115,7 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlertasRoute: typeof AlertasRoute
   QrRoute: typeof QrRoute
-  SanitariosRoute: typeof SanitariosRoute
+  SanitariosRoute: typeof SanitariosRouteWithChildren
   AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
   AnimalesNuevoRoute: typeof AnimalesNuevoRoute
   AnimalesIndexRoute: typeof AnimalesIndexRoute
@@ -158,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnimalesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sanitarios/nuevo': {
+      id: '/sanitarios/nuevo'
+      path: '/nuevo'
+      fullPath: '/sanitarios/nuevo'
+      preLoaderRoute: typeof SanitariosNuevoRouteImport
+      parentRoute: typeof SanitariosRoute
+    }
     '/animales/nuevo': {
       id: '/animales/nuevo'
       path: '/animales/nuevo'
@@ -175,11 +194,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SanitariosRouteChildren {
+  SanitariosNuevoRoute: typeof SanitariosNuevoRoute
+}
+
+const SanitariosRouteChildren: SanitariosRouteChildren = {
+  SanitariosNuevoRoute: SanitariosNuevoRoute,
+}
+
+const SanitariosRouteWithChildren = SanitariosRoute._addFileChildren(
+  SanitariosRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlertasRoute: AlertasRoute,
   QrRoute: QrRoute,
-  SanitariosRoute: SanitariosRoute,
+  SanitariosRoute: SanitariosRouteWithChildren,
   AnimalesCaravanaRoute: AnimalesCaravanaRoute,
   AnimalesNuevoRoute: AnimalesNuevoRoute,
   AnimalesIndexRoute: AnimalesIndexRoute,
