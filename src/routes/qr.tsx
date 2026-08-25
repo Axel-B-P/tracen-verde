@@ -4,8 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
-import { animales } from "@/lib/trazagan-data";
+import { fetchAnimales } from "@/lib/animal-api";
 
 const searchSchema = z.object({
   caravana: z.string().optional(),
@@ -37,7 +38,17 @@ function Page() {
   const [copied, setCopied] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const animal = useMemo(() => animales.find((a) => a.caravana === selected) ?? null, [selected]);
+  const { data: animalesDb, isLoading: cargandoAnimales } = useQuery({
+    queryKey: ["animales"],
+    queryFn: fetchAnimales,
+    retry: 1,
+  });
+  const animales = animalesDb ?? [];
+
+  const animal = useMemo(
+    () => animales.find((a) => a.caravana === selected) ?? null,
+    [animales, selected],
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -45,7 +56,7 @@ function Page() {
     return animales.filter(
       (a) => a.caravana.toLowerCase().includes(q) || a.raza.toLowerCase().includes(q),
     );
-  }, [query]);
+  }, [animales, query]);
 
   const url = useMemo(() => {
     if (!animal) return "";
@@ -132,7 +143,10 @@ function Page() {
                   </li>
                 );
               })}
-              {filtered.length === 0 && (
+              {cargandoAnimales && (
+                <li className="px-3 py-4 text-center text-sm text-muted-foreground">Cargando animales…</li>
+              )}
+              {!cargandoAnimales && filtered.length === 0 && (
                 <li className="px-3 py-4 text-center text-sm text-muted-foreground">Sin resultados</li>
               )}
             </ul>
