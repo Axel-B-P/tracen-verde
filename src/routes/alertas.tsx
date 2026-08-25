@@ -1,29 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertTriangle, Clock, CalendarCheck, Check } from "lucide-react";
+import { AlertTriangle, Clock, CalendarCheck, Check, Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
+import { fetchRegistros, derivarAlertas } from "@/lib/animal-api";
 
 export const Route = createFileRoute("/alertas")({
-  head: () => ({ meta: [{ title: "Alertas · TrazaGan" }] }),
+  head: () => ({
+    meta: [
+      { title: "Alertas · TrazaGan" },
+      {
+        name: "description",
+        content: "Vencimientos de vacunas y carencias activas de tu rodeo en tiempo real.",
+      },
+      { property: "og:title", content: "Alertas · TrazaGan" },
+      {
+        property: "og:description",
+        content: "Centro de alertas sanitarias del rodeo en TrazaGan.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Page,
 });
-
-type Tono = "red" | "amber" | "green";
-type Alerta = {
-  id: string;
-  tono: Tono;
-  caravana: string;
-  descripcion: string;
-  fecha: string;
-};
-
-const initial: Alerta[] = [
-  { id: "1", tono: "red", caravana: "AR-0015", descripcion: "Carencia activa por Oxitetraciclina — vence el 28/06/2026", fecha: "28/06/2026" },
-  { id: "2", tono: "red", caravana: "AR-0031", descripcion: "Vacuna Tuberculosis vencida desde el 01/06/2026", fecha: "01/06/2026" },
-  { id: "3", tono: "amber", caravana: "AR-0042", descripcion: "Vacuna Aftosa vence en 5 días (28/06/2026)", fecha: "28/06/2026" },
-  { id: "4", tono: "amber", caravana: "AR-0078", descripcion: "Control lechero mensual pendiente", fecha: "—" },
-  { id: "5", tono: "green", caravana: "AR-0093", descripcion: "Desparasitación programada para 30/06/2026", fecha: "30/06/2026" },
-];
 
 type FilterKey = "todas" | "criticas" | "proximas" | "resueltas";
 const tabs: { key: FilterKey; label: string }[] = [
@@ -34,7 +34,12 @@ const tabs: { key: FilterKey; label: string }[] = [
 ];
 
 function Page() {
-  const [alerts, setAlerts] = useState(initial);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["registros"],
+    queryFn: fetchRegistros,
+    retry: 1,
+  });
+  const alerts = useMemo(() => derivarAlertas(data ?? []), [data]);
   const [resolved, setResolved] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<FilterKey>("todas");
 
@@ -91,8 +96,18 @@ function Page() {
             })}
           </div>
 
+          {isError && (
+            <div className="px-6 py-2 text-xs text-accent-foreground bg-accent/20">
+              Sin conexión con la base de datos — no se pudieron cargar las alertas.
+            </div>
+          )}
           <ul className="divide-y divide-border">
-            {visible.length === 0 && (
+            {isLoading && (
+              <li className="flex items-center justify-center gap-2 px-6 py-10 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Cargando alertas…
+              </li>
+            )}
+            {!isLoading && visible.length === 0 && (
               <li className="px-6 py-10 text-center text-sm text-muted-foreground">
                 No hay alertas en esta categoría.
               </li>

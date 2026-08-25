@@ -2,8 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Beef, ShieldCheck, AlertTriangle, BellRing, QrCode, Eye, Plus, Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { animales as mockAnimales, alertas } from "@/lib/trazagan-data";
-import { fetchAnimales, type DbAnimal } from "@/lib/animal-api";
+import { animales as mockAnimales } from "@/lib/trazagan-data";
+import { fetchAnimales, fetchRegistros, derivarAlertas, type DbAnimal } from "@/lib/animal-api";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -84,6 +84,41 @@ function Dashboard() {
     retry: 1,
   });
 
+  const registrosQuery = useQuery({
+    queryKey: ["registros"],
+    queryFn: fetchRegistros,
+    retry: 1,
+  });
+  const alertasDb = derivarAlertas(registrosQuery.data ?? []);
+  const alertas = alertasDb.length > 0 ? alertasDb : [];
+
+  const registros = registrosQuery.data ?? [];
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const conCarencia = new Set(
+    registros
+      .filter(
+        (r) =>
+          r.periodo_carencia &&
+          r.fecha_vencimiento &&
+          new Date(`${r.fecha_vencimiento.split("T")[0]}T00:00:00`) >= hoy,
+      )
+      .map((r) => r.animal_id),
+  ).size;
+  const conVacunaVencida = new Set(
+    registros
+      .filter(
+        (r) =>
+          r.tipo === "vacuna" &&
+          r.fecha_vencimiento &&
+          new Date(`${r.fecha_vencimiento.split("T")[0]}T00:00:00`) < hoy,
+      )
+      .map((r) => r.animal_id),
+  ).size;
+  const totalAnimales = data?.length ?? 0;
+  const vacunasAlDia = Math.max(totalAnimales - conVacunaVencida, 0);
+  const alertasPendientes = alertasDb.filter((a) => a.tono !== "green").length;
+
   const mockRows: Row[] = mockAnimales.map((a) => ({
     caravana: a.caravana,
     raza: a.raza,
@@ -114,10 +149,10 @@ function Dashboard() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Total animales" value={data?.length ?? 150} icon={Beef} tone="primary" />
-          <StatCard label="Vacunas al día" value={142} icon={ShieldCheck} tone="success" />
-          <StatCard label="Con carencia activa" value={3} icon={AlertTriangle} tone="warning" />
-          <StatCard label="Alertas pendientes" value={5} icon={BellRing} tone="danger" />
+          <StatCard label="Total animales" value={totalAnimales} icon={Beef} tone="primary" />
+          <StatCard label="Vacunas al día" value={vacunasAlDia} icon={ShieldCheck} tone="success" />
+          <StatCard label="Con carencia activa" value={conCarencia} icon={AlertTriangle} tone="warning" />
+          <StatCard label="Alertas pendientes" value={alertasPendientes} icon={BellRing} tone="danger" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
@@ -196,6 +231,11 @@ function Dashboard() {
               <h2 className="font-display font-semibold text-foreground">Alertas próximas</h2>
             </div>
             <ul className="p-3 space-y-1">
+              {alertas.length === 0 && (
+                <li className="px-3 py-6 text-center text-sm text-muted-foreground">
+                  Sin alertas sanitarias registradas.
+                </li>
+              )}
               {alertas.map((al, i) => {
                 const dot = {
                   red: "bg-destructive",
@@ -208,7 +248,9 @@ function Dashboard() {
                     className="flex items-start gap-3 rounded-lg px-3 py-3 hover:bg-muted/50"
                   >
                     <span className={`mt-1.5 h-2.5 w-2.5 rounded-full ${dot}`} />
-                    <span className="text-sm text-foreground">{al.texto}</span>
+                    <span className="text-sm text-foreground">
+                      <span className="font-medium">{al.caravana}</span> — {al.descripcion}
+                    </span>
                   </li>
                 );
               })}
