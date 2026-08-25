@@ -96,8 +96,18 @@ function Page() {
             })}
           </div>
 
+          {isError && (
+            <div className="px-6 py-2 text-xs text-accent-foreground bg-accent/20">
+              Sin conexión con la base de datos — no se pudieron cargar las alertas.
+            </div>
+          )}
           <ul className="divide-y divide-border">
-            {visible.length === 0 && (
+            {isLoading && (
+              <li className="flex items-center justify-center gap-2 px-6 py-10 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Cargando alertas…
+              </li>
+            )}
+            {!isLoading && visible.length === 0 && (
               <li className="px-6 py-10 text-center text-sm text-muted-foreground">
                 No hay alertas en esta categoría.
               </li>
