@@ -137,7 +137,7 @@ function Page() {
                     >
                       <span className="font-medium">{a.caravana}</span>
                       <span className="text-xs text-muted-foreground">
-                        {a.raza} · {a.categoria}
+                        {a.raza} · {a.categoria ?? "—"}
                       </span>
                     </button>
                   </li>
@@ -156,7 +156,7 @@ function Page() {
                 <div className="text-xs uppercase tracking-wide text-primary">Animal seleccionado</div>
                 <div className="mt-1 font-display text-lg font-semibold">{animal.caravana}</div>
                 <div className="text-sm text-muted-foreground">
-                  {animal.raza} · {animal.categoria}
+                  {animal.raza} · {animal.categoria ?? "—"}
                 </div>
               </div>
             )}
