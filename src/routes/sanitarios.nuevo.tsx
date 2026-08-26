@@ -76,10 +76,12 @@ function NuevoRegistroPage() {
   }>({});
 
   // Preseleccionar animal si viene ?caravana= en la URL
-  if (caravanaParam && !form.animalId && animales.length > 0) {
+  useEffect(() => {
+    if (!caravanaParam) return;
     const match = animales.find((a) => a.caravana === caravanaParam);
-    if (match) setForm((f) => ({ ...f, animalId: match.id }));
-  }
+    if (match) setForm((f) => (f.animalId ? f : { ...f, animalId: match.id }));
+  }, [caravanaParam, animales]);
+
 
   const mutation = useMutation({
     mutationFn: insertRegistro,
