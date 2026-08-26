@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Syringe, Loader2 } from "lucide-react";
+import { Syringe, Loader2, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { fetchRegistros, formatFecha } from "@/lib/animal-api";
@@ -48,6 +48,7 @@ function Page() {
           </div>
           <Link
             to="/sanitarios/nuevo"
+            search={{ caravana: undefined }}
             className="ml-auto inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="h-4 w-4" /> Nuevo registro
