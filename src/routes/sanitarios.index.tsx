@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { fetchRegistros, formatFecha } from "@/lib/animal-api";
 
-export const Route = createFileRoute("/sanitarios")({
+export const Route = createFileRoute("/sanitarios/")({
   head: () => ({
     meta: [
       { title: "Registros sanitarios · TrazaGan" },
