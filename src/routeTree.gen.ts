@@ -44,9 +44,9 @@ const AnimalesIndexRoute = AnimalesIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const SanitariosNuevoRoute = SanitariosNuevoRouteImport.update({
-  id: '/sanitarios/nuevo',
-  path: '/sanitarios/nuevo',
-  getParentRoute: () => rootRouteImport,
+  id: '/nuevo',
+  path: '/nuevo',
+  getParentRoute: () => SanitariosRoute,
 } as any)
 const AnimalesNuevoRoute = AnimalesNuevoRouteImport.update({
   id: '/animales/nuevo',
@@ -129,7 +129,6 @@ export interface RootRouteChildren {
   QrRoute: typeof QrRoute
   AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
   AnimalesNuevoRoute: typeof AnimalesNuevoRoute
-  SanitariosNuevoRoute: typeof SanitariosNuevoRoute
   AnimalesIndexRoute: typeof AnimalesIndexRoute
   SanitariosIndexRoute: typeof SanitariosIndexRoute
 }
@@ -173,10 +172,10 @@ declare module '@tanstack/react-router' {
     }
     '/sanitarios/nuevo': {
       id: '/sanitarios/nuevo'
-      path: '/sanitarios/nuevo'
+      path: '/nuevo'
       fullPath: '/sanitarios/nuevo'
       preLoaderRoute: typeof SanitariosNuevoRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SanitariosRoute
     }
     '/animales/nuevo': {
       id: '/animales/nuevo'
@@ -201,7 +200,6 @@ const rootRouteChildren: RootRouteChildren = {
   QrRoute: QrRoute,
   AnimalesCaravanaRoute: AnimalesCaravanaRoute,
   AnimalesNuevoRoute: AnimalesNuevoRoute,
-  SanitariosNuevoRoute: SanitariosNuevoRoute,
   AnimalesIndexRoute: AnimalesIndexRoute,
   SanitariosIndexRoute: SanitariosIndexRoute,
 }
