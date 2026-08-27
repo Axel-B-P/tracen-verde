@@ -63,9 +63,15 @@ export const analizarHistorial = createServerFn({ method: "POST" })
     });
 
     if (!res.ok) {
-      const detail = await res.text();
-      console.error("Groq error", res.status, detail.slice(0, 500));
-      throw new Error(`Groq request failed with status ${res.status}`);
+      let detail = "";
+      try {
+        detail = await res.text();
+      } catch (_) {
+        detail = "No response body";
+      }
+      const fullError = `Groq request failed with status ${res.status}: ${detail}`;
+      console.error(fullError);
+      throw new Error(fullError);
     }
 
     const json = (await res.json()) as {
