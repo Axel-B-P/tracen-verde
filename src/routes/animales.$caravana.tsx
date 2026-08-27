@@ -47,6 +47,13 @@ function AnimalDetail() {
     retry: 1,
   });
 
+  const analizar = useServerFn(analizarHistorial);
+  const analisisMutation = useMutation({
+    mutationFn: analizar,
+  });
+
+
+
   if (animalQuery.isLoading) {
     return (
       <AppLayout>
