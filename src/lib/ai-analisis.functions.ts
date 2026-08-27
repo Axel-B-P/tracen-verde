@@ -22,8 +22,8 @@ const inputSchema = z.object({
 export const analizarHistorial = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => inputSchema.parse(data))
   .handler(async ({ data }) => {
-    const apiKey = process.env["ANTHROPIC_API_KEY"];
-    if (!apiKey) throw new Error("ANTHROPIC_API_KEY missing");
+    const apiKey = process.env["GROQ_API_KEY"];
+    if (!apiKey) throw new Error("GROQ_API_KEY missing");
 
     const lista =
       data.registros.length === 0
@@ -39,46 +39,39 @@ export const analizarHistorial = createServerFn({ method: "POST" })
             )
             .join("\n");
 
-    const prompt = `Sos un asistente veterinario especializado en ganadería argentina. Analizá el siguiente historial sanitario de un animal y respondé en español, con lenguaje simple y directo, sin tecnicismos innecesarios.
-
-Animal: caravana ${data.caravana}, ${data.raza}, ${data.categoria ?? "categoría no informada"}, nacido el ${data.fecha_nacimiento ?? "fecha no informada"}, sistema de cría ${data.sistema_cria ?? "no informado"}.
-
-Historial sanitario:
-${lista}
-
-Respondé con:
-1. Estado sanitario general (una oración simple)
-2. Vacunas o tratamientos que están por vencer o ya vencieron
-3. Riesgos que detectás en el historial
-4. Qué recomendarías revisar próximamente
-
-Sé breve y claro. Máximo 150 palabras.`;
-
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 700,
-        messages: [{ role: "user", content: prompt }],
+        model: "llama-3.1-8b-instant",
+        max_tokens: 400,
+        messages: [
+          {
+            role: "system",
+            content:
+              "Sos un asistente veterinario especializado en ganadería argentina. Respondé siempre en español, con lenguaje simple y directo, sin tecnicismos innecesarios.",
+          },
+          {
+            role: "user",
+            content: `Analizá el siguiente historial sanitario de un animal y respondé con: 1) Estado sanitario general en una oración, 2) Vacunas o tratamientos por vencer o ya vencidos, 3) Riesgos que detectás, 4) Qué recomendarías revisar. Sé breve, máximo 150 palabras.\n\nAnimal: ${data.raza}, ${data.categoria ?? "categoría no informada"}, nacido el ${data.fecha_nacimiento ?? "fecha no informada"}, sistema de cría ${data.sistema_cria ?? "no informado"}.\n\nHistorial:\n${lista}`,
+          },
+        ],
       }),
     });
 
     if (!res.ok) {
       const detail = await res.text();
-      console.error("Anthropic error", res.status, detail.slice(0, 500));
-      throw new Error(`Anthropic request failed with status ${res.status}`);
+      console.error("Groq error", res.status, detail.slice(0, 500));
+      throw new Error(`Groq request failed with status ${res.status}`);
     }
 
-    const json = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
-    const texto = (json.content ?? [])
-      .filter((c) => c.type === "text" && c.text)
-      .map((c) => c.text!.trim())
-      .join("\n\n");
+    const json = (await res.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const texto = json.choices?.[0]?.message?.content?.trim() ?? "";
 
     return { analisis: texto || "El análisis no devolvió contenido." };
   });
