@@ -284,7 +284,7 @@ function AnimalDetail() {
 
           {analisisMutation.isError && (
             <div className="rounded-xl border border-border bg-card px-5 py-4 text-sm text-accent-foreground">
-              No se pudo realizar el análisis. Intentá de nuevo.
+              Error: {analisisMutation.error?.message ?? "No se pudo realizar el análisis. Intentá de nuevo."}
             </div>
           )}
 
