@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, QrCode, CheckCircle2, MapPin, Wheat, ShieldCheck, Calendar, Loader2 } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowLeft, QrCode, CheckCircle2, MapPin, Wheat, ShieldCheck, Calendar, Loader2, Sparkles } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { getAnimal } from "@/lib/trazagan-data";
+import { analizarHistorial } from "@/lib/ai-analisis.functions";
 import {
   fetchAnimalByCaravana,
   fetchRegistrosByAnimalId,
@@ -10,6 +12,7 @@ import {
   type DbAnimal,
   type DbRegistroSanitario,
 } from "@/lib/animal-api";
+
 
 export const Route = createFileRoute("/animales/$caravana")({
   head: ({ params }) => ({
