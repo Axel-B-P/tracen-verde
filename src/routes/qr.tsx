@@ -60,7 +60,7 @@ function Page() {
 
   const url = useMemo(() => {
     if (!animal) return "";
-    const base = `https://trasa-gan.vercel.app/Animal/${animal.caravana}`;
+    const base = `https://trasa-gan.vercel.app/public/${animal.caravana}`;
     if (contexto === "faena") {
       return `${base}?ctx=faena&fraccion=${encodeURIComponent(fraccion)}`;
     }

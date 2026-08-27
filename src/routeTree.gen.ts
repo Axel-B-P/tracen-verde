@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SanitariosIndexRouteImport } from './routes/sanitarios.index'
 import { Route as AnimalesIndexRouteImport } from './routes/animales.index'
 import { Route as SanitariosNuevoRouteImport } from './routes/sanitarios.nuevo'
+import { Route as PublicCaravanaRouteImport } from './routes/public.$caravana'
 import { Route as AnimalesNuevoRouteImport } from './routes/animales.nuevo'
 import { Route as AnimalesCaravanaRouteImport } from './routes/animales.$caravana'
 
@@ -48,6 +49,11 @@ const SanitariosNuevoRoute = SanitariosNuevoRouteImport.update({
   path: '/sanitarios/nuevo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicCaravanaRoute = PublicCaravanaRouteImport.update({
+  id: '/public/$caravana',
+  path: '/public/$caravana',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnimalesNuevoRoute = AnimalesNuevoRouteImport.update({
   id: '/animales/nuevo',
   path: '/animales/nuevo',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/qr': typeof QrRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/nuevo': typeof AnimalesNuevoRoute
+  '/public/$caravana': typeof PublicCaravanaRoute
   '/sanitarios/nuevo': typeof SanitariosNuevoRoute
   '/animales/': typeof AnimalesIndexRoute
   '/sanitarios/': typeof SanitariosIndexRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/qr': typeof QrRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/nuevo': typeof AnimalesNuevoRoute
+  '/public/$caravana': typeof PublicCaravanaRoute
   '/sanitarios/nuevo': typeof SanitariosNuevoRoute
   '/animales': typeof AnimalesIndexRoute
   '/sanitarios': typeof SanitariosIndexRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/qr': typeof QrRoute
   '/animales/$caravana': typeof AnimalesCaravanaRoute
   '/animales/nuevo': typeof AnimalesNuevoRoute
+  '/public/$caravana': typeof PublicCaravanaRoute
   '/sanitarios/nuevo': typeof SanitariosNuevoRoute
   '/animales/': typeof AnimalesIndexRoute
   '/sanitarios/': typeof SanitariosIndexRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/qr'
     | '/animales/$caravana'
     | '/animales/nuevo'
+    | '/public/$caravana'
     | '/sanitarios/nuevo'
     | '/animales/'
     | '/sanitarios/'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/qr'
     | '/animales/$caravana'
     | '/animales/nuevo'
+    | '/public/$caravana'
     | '/sanitarios/nuevo'
     | '/animales'
     | '/sanitarios'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/qr'
     | '/animales/$caravana'
     | '/animales/nuevo'
+    | '/public/$caravana'
     | '/sanitarios/nuevo'
     | '/animales/'
     | '/sanitarios/'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   QrRoute: typeof QrRoute
   AnimalesCaravanaRoute: typeof AnimalesCaravanaRoute
   AnimalesNuevoRoute: typeof AnimalesNuevoRoute
+  PublicCaravanaRoute: typeof PublicCaravanaRoute
   SanitariosNuevoRoute: typeof SanitariosNuevoRoute
   AnimalesIndexRoute: typeof AnimalesIndexRoute
   SanitariosIndexRoute: typeof SanitariosIndexRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SanitariosNuevoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/public/$caravana': {
+      id: '/public/$caravana'
+      path: '/public/$caravana'
+      fullPath: '/public/$caravana'
+      preLoaderRoute: typeof PublicCaravanaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/animales/nuevo': {
       id: '/animales/nuevo'
       path: '/animales/nuevo'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   QrRoute: QrRoute,
   AnimalesCaravanaRoute: AnimalesCaravanaRoute,
   AnimalesNuevoRoute: AnimalesNuevoRoute,
+  PublicCaravanaRoute: PublicCaravanaRoute,
   SanitariosNuevoRoute: SanitariosNuevoRoute,
   AnimalesIndexRoute: AnimalesIndexRoute,
   SanitariosIndexRoute: SanitariosIndexRoute,
