@@ -1,13 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+/** Acepta números, strings numéricos, vacíos o valores inválidos → null */
+const numeroLaxo = z.preprocess((v) => {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}, z.number().nullable());
+
 const registroSchema = z.object({
   tipo: z.string().max(80),
   producto: z.string().max(120).nullable().optional(),
-  dosis: z.coerce.number().nullable().optional(),
+  dosis: numeroLaxo.optional(),
   fecha_aplicacion: z.string().max(40),
   fecha_vencimiento: z.string().max(40).nullable().optional(),
-  periodo_carencia: z.coerce.number().nullable().optional(),
+  periodo_carencia: numeroLaxo.optional(),
 });
 
 const inputSchema = z.object({
