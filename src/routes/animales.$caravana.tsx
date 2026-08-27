@@ -245,6 +245,75 @@ function AnimalDetail() {
             </ol>
           )}
         </div>
+
+        <div className="space-y-4">
+          <button
+            type="button"
+            onClick={() =>
+              analisisMutation.mutate({
+                data: {
+                  caravana,
+                  raza,
+                  categoria: db?.categoria ?? null,
+                  sistema_cria: sistemaCria,
+                  fecha_nacimiento: fechaNacimiento,
+                  registros: registros.map((r) => ({
+                    tipo: r.tipo,
+                    producto: r.producto,
+                    dosis: r.dosis,
+                    fecha_aplicacion: formatFecha(r.fecha_aplicacion),
+                    fecha_vencimiento: r.fecha_vencimiento ? formatFecha(r.fecha_vencimiento) : null,
+                    periodo_carencia: r.periodo_carencia,
+                  })),
+                },
+              })
+            }
+            disabled={analisisMutation.isPending}
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60"
+          >
+            {analisisMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Analizando historial…
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4" /> Analizar historial con IA
+              </>
+            )}
+          </button>
+
+          {analisisMutation.isError && (
+            <div className="rounded-xl border border-border bg-card px-5 py-4 text-sm text-accent-foreground">
+              No se pudo realizar el análisis. Intentá de nuevo.
+            </div>
+          )}
+
+          {analisisMutation.data && (
+            <div className="rounded-xl bg-card border border-border shadow-sm overflow-hidden">
+              <div className="bg-primary text-primary-foreground px-5 py-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="font-display font-semibold">Análisis IA del historial sanitario</h2>
+              </div>
+              <div className="px-5 py-4 space-y-4">
+                <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                  {analisisMutation.data.analisis}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => analisisMutation.mutate(analisisMutation.variables!)}
+                  disabled={analisisMutation.isPending}
+                  className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/50 disabled:opacity-60"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> Actualizar análisis
+                </button>
+                <p className="text-[11px] text-muted-foreground border-t border-border pt-3">
+                  Este análisis es orientativo. Consultá siempre con un veterinario.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
       </div>
     </AppLayout>
   );
