@@ -4,10 +4,10 @@ import { z } from "zod";
 const registroSchema = z.object({
   tipo: z.string().max(80),
   producto: z.string().max(120).nullable().optional(),
-  dosis: z.number().nullable().optional(),
+  dosis: z.coerce.number().nullable().optional(),
   fecha_aplicacion: z.string().max(40),
   fecha_vencimiento: z.string().max(40).nullable().optional(),
-  periodo_carencia: z.number().nullable().optional(),
+  periodo_carencia: z.coerce.number().nullable().optional(),
 });
 
 const inputSchema = z.object({
